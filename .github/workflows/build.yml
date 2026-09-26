@@ -13,7 +13,7 @@ concurrency:
 jobs:
   build:
     name: Build & lint (Swift)
-    runs-on: macos-latest     # arm64 M-series runner
+    runs-on: macos-15         # arm64 M-series runner; macos-latest is macOS 26 (Xcode 26.x only) and no longer has Xcode_16.4.app
 
     steps:
       - uses: actions/checkout@v4
@@ -29,20 +29,34 @@ jobs:
         run: xcodegen generate
 
       # ── Build for simulator (no signing required) ─────────────────────────
+      # OS=18.5 is the iOS runtime bundled with Xcode 16.4. "OS=latest" picks
+      # the newest runtime on the image (26.x), which this Xcode cannot drive:
+      # the test host aborts before any test runs.
       - name: Build (iPhone simulator)
         run: |
+          set -o pipefail   # without this, xcpretty's exit status hides a failed xcodebuild
           xcodebuild build \
             -project CobbVisionCompanion.xcodeproj \
             -scheme  CobbVisionCompanion \
             -sdk     iphonesimulator \
-            -destination "platform=iOS Simulator,name=iPhone 16,OS=latest" \
+            -destination "platform=iOS Simulator,name=iPhone 16,OS=18.5" \
             CODE_SIGNING_ALLOWED=NO \
             | xcpretty || xcodebuild build \
               -project CobbVisionCompanion.xcodeproj \
               -scheme  CobbVisionCompanion \
               -sdk     iphonesimulator \
-              -destination "platform=iOS Simulator,name=iPhone 16,OS=latest" \
+              -destination "platform=iOS Simulator,name=iPhone 16,OS=18.5" \
               CODE_SIGNING_ALLOWED=NO
+
+      # ── Unit tests (CobbVisionCompanionTests, iPhone simulator) ───────────
+      - name: Run unit tests (iPhone simulator)
+        run: |
+          xcodebuild test \
+            -project CobbVisionCompanion.xcodeproj \
+            -scheme  CobbVisionCompanion \
+            -sdk     iphonesimulator \
+            -destination "platform=iOS Simulator,name=iPhone 16,OS=18.5" \
+            CODE_SIGNING_ALLOWED=NO
 
       # ── Swift lint (non-blocking — reports but does not fail the build) ───
       - name: SwiftLint

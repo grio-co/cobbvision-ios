@@ -8,11 +8,27 @@ struct HistoryView: View {
         NavigationView {
             List {
                 if sessionStore.sessions.isEmpty {
-                    ContentUnavailableView(
-                        "No sessions yet",
-                        systemImage: "location.slash",
-                        description: Text("Record a drive to see it here.")
-                    )
+                    // ContentUnavailableView is iOS 17+; the deployment target is 16.0.
+                    if #available(iOS 17, *) {
+                        ContentUnavailableView(
+                            "No sessions yet",
+                            systemImage: "location.slash",
+                            description: Text("Record a drive to see it here.")
+                        )
+                    } else {
+                        VStack(spacing: 8) {
+                            Image(systemName: "location.slash")
+                                .font(.largeTitle)
+                                .foregroundStyle(.secondary)
+                            Text("No sessions yet")
+                                .font(.headline)
+                            Text("Record a drive to see it here.")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 32)
+                    }
                 } else {
                     ForEach(sessionStore.sessions.reversed()) { session in
                         SessionRow(session: session)
