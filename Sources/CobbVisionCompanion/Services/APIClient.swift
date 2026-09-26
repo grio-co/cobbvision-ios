@@ -93,7 +93,7 @@ final class APIClient {
 
     // MARK: - Vehicles
 
-    struct Vehicle: Identifiable, Decodable {
+    struct Vehicle: Identifiable, Decodable, Hashable {
         let id:       String
         let name:     String
         let make:     String
