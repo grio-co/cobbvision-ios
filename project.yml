@@ -27,8 +27,12 @@ targets:
         INFOPLIST_FILE: Resources/Info.plist
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: ""   # set your Apple Team ID here
-    info:
-      path: Resources/Info.plist
+    # No `info:` block on purpose: XcodeGen *generates* (overwrites) the file
+    # named there, which wiped the NSLocation* usage strings and the
+    # UIBackgroundModes/location entry from Resources/Info.plist and made the
+    # app abort at launch (CoreLocation asserts when
+    # allowsBackgroundLocationUpdates is set without the background mode).
+    # INFOPLIST_FILE above points at the committed plist instead.
     entitlements:
       path: Resources/CobbVisionCompanion.entitlements
 
