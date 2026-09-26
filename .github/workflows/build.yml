@@ -31,6 +31,7 @@ jobs:
       # ── Build for simulator (no signing required) ─────────────────────────
       - name: Build (iPhone simulator)
         run: |
+          set -o pipefail   # without this, xcpretty's exit status hides a failed xcodebuild
           xcodebuild build \
             -project CobbVisionCompanion.xcodeproj \
             -scheme  CobbVisionCompanion \
