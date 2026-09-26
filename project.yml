@@ -32,4 +32,37 @@ targets:
     entitlements:
       path: Resources/CobbVisionCompanion.entitlements
 
+  CobbVisionCompanionTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - Tests/CobbVisionCompanionTests
+    dependencies:
+      - target: CobbVisionCompanion
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.cobbvision.companion.tests
+        GENERATE_INFOPLIST_FILE: YES
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: ""
+
+schemes:
+  CobbVisionCompanion:
+    build:
+      targets:
+        CobbVisionCompanion: all
+        CobbVisionCompanionTests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - CobbVisionCompanionTests
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
+
 # Generate with: brew install xcodegen && xcodegen generate

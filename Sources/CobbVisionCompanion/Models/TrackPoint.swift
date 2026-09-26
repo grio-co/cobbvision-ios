@@ -16,6 +16,20 @@ struct TrackPoint: Codable {
     /// Speed in mph, clamped to ≥ 0.
     var speedMPH: Double { max(0, speedMS) * 2.23694 }
 
+    init(latitude: Double,
+         longitude: Double,
+         altitude: Double,
+         speedMS: Double,
+         horizontalAccuracy: Double,
+         timestamp: Date) {
+        self.latitude           = latitude
+        self.longitude          = longitude
+        self.altitude           = altitude
+        self.speedMS            = speedMS
+        self.horizontalAccuracy = horizontalAccuracy
+        self.timestamp          = timestamp
+    }
+
     init(from location: CLLocation) {
         latitude           = location.coordinate.latitude
         longitude          = location.coordinate.longitude
@@ -37,10 +51,20 @@ struct DriveSession: Identifiable, Codable {
     var vehicleId:  String?   // set by user before upload
     var uploaded:   Bool = false
 
-    init() {
-        id          = UUID()
-        startedAt   = Date()
-        trackPoints = []
+    /// `DriveSession()` starts a new, empty session now; the parameters exist so
+    /// a session can be rebuilt with fixed values (tests, migrations).
+    init(id: UUID = UUID(),
+         startedAt: Date = Date(),
+         endedAt: Date? = nil,
+         trackPoints: [TrackPoint] = [],
+         vehicleId: String? = nil,
+         uploaded: Bool = false) {
+        self.id          = id
+        self.startedAt   = startedAt
+        self.endedAt     = endedAt
+        self.trackPoints = trackPoints
+        self.vehicleId   = vehicleId
+        self.uploaded    = uploaded
     }
 
     var duration: TimeInterval { (endedAt ?? Date()).timeIntervalSince(startedAt) }

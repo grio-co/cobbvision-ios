@@ -44,6 +44,16 @@ jobs:
               -destination "platform=iOS Simulator,name=iPhone 16,OS=latest" \
               CODE_SIGNING_ALLOWED=NO
 
+      # ── Unit tests (CobbVisionCompanionTests, iPhone simulator) ───────────
+      - name: Run unit tests (iPhone simulator)
+        run: |
+          xcodebuild test \
+            -project CobbVisionCompanion.xcodeproj \
+            -scheme  CobbVisionCompanion \
+            -sdk     iphonesimulator \
+            -destination "platform=iOS Simulator,name=iPhone 16,OS=latest" \
+            CODE_SIGNING_ALLOWED=NO
+
       # ── Swift lint (non-blocking — reports but does not fail the build) ───
       - name: SwiftLint
         continue-on-error: true
