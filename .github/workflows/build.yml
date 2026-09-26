@@ -29,6 +29,9 @@ jobs:
         run: xcodegen generate
 
       # ── Build for simulator (no signing required) ─────────────────────────
+      # OS=18.5 is the iOS runtime bundled with Xcode 16.4. "OS=latest" picks
+      # the newest runtime on the image (26.x), which this Xcode cannot drive:
+      # the test host aborts before any test runs.
       - name: Build (iPhone simulator)
         run: |
           set -o pipefail   # without this, xcpretty's exit status hides a failed xcodebuild
@@ -36,13 +39,13 @@ jobs:
             -project CobbVisionCompanion.xcodeproj \
             -scheme  CobbVisionCompanion \
             -sdk     iphonesimulator \
-            -destination "platform=iOS Simulator,name=iPhone 16,OS=latest" \
+            -destination "platform=iOS Simulator,name=iPhone 16,OS=18.5" \
             CODE_SIGNING_ALLOWED=NO \
             | xcpretty || xcodebuild build \
               -project CobbVisionCompanion.xcodeproj \
               -scheme  CobbVisionCompanion \
               -sdk     iphonesimulator \
-              -destination "platform=iOS Simulator,name=iPhone 16,OS=latest" \
+              -destination "platform=iOS Simulator,name=iPhone 16,OS=18.5" \
               CODE_SIGNING_ALLOWED=NO
 
       # ── Unit tests (CobbVisionCompanionTests, iPhone simulator) ───────────
@@ -52,7 +55,7 @@ jobs:
             -project CobbVisionCompanion.xcodeproj \
             -scheme  CobbVisionCompanion \
             -sdk     iphonesimulator \
-            -destination "platform=iOS Simulator,name=iPhone 16,OS=latest" \
+            -destination "platform=iOS Simulator,name=iPhone 16,OS=18.5" \
             CODE_SIGNING_ALLOWED=NO
 
       # ── Swift lint (non-blocking — reports but does not fail the build) ───
