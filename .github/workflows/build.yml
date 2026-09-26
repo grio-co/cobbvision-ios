@@ -13,7 +13,7 @@ concurrency:
 jobs:
   build:
     name: Build & lint (Swift)
-    runs-on: macos-latest     # arm64 M-series runner
+    runs-on: macos-15         # arm64 M-series runner; macos-latest is macOS 26 (Xcode 26.x only) and no longer has Xcode_16.4.app
 
     steps:
       - uses: actions/checkout@v4
